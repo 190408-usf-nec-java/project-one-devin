@@ -20,8 +20,9 @@ public class UserDao {
 	 * @return Credentials Object
 	 * @throws SQLException
 	 */
-	public Credentials GetCredentialsByUser(String username) throws SQLException{
+	public User getUser(String username) throws SQLException{
 		String hashedPass = "";
+		User user = new User();
 		Credentials cred = new Credentials();
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -30,19 +31,25 @@ public class UserDao {
 			e1.printStackTrace();
 		}
 		try(Connection conn = ConnectionUtil.getConnection()){
-			String sql = "SELECT user_password FROM users WHERE user_name = ?";
+			String sql = "SELECT user_password, user_first_name," + 
+					"user_last_name, user_email, user_role FROM users WHERE user_name = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
 			if(rs.next()) {
 				hashedPass = rs.getString("user_password");
+				user.setRole(rs.getString("user_role"));
+				user.setFirstname(rs.getString("user_first_name"));
+				user.setLastname(rs.getString("user_last_name"));
+				user.setEmail(rs.getString("user_email"));
 			}
 		}catch(SQLException e) {
 			throw new SQLException();
 		}
 		cred.setHashedPass(hashedPass);
 		cred.setUsername(username);
-		return cred;
+		user.setCredentials(cred);
+		return user;
 	}
 	
 	public void addUser(User user) throws SQLException { 

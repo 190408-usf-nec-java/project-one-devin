@@ -17,7 +17,7 @@ public class LoginService {
 	 * @return true if credentials are correct, false if not
 	 * @throws HttpException(500) if database error
 	 */
-	public boolean login(Credentials cred) throws HttpException{
+	public User login(Credentials cred) throws HttpException{
 		
 		/*char[] pwd = "hamsterparty".toCharArray();
 		Credentials testCred = new Credentials("MontyPython", pwd, passwordUtil.hashPassword(pwd));
@@ -28,24 +28,20 @@ public class LoginService {
 			e.printStackTrace();
 		}*/
 		
-		
-		
-		Credentials checkCred=null;
+		User user = null;
 		try {
-			checkCred = userDao.GetCredentialsByUser(cred.getUsername());
+			user = userDao.getUser(cred.getUsername());
 		} catch (SQLException e) {
 			throw new HttpException(500);
 		}
 		cred.setHashedPass(passwordUtil.hashPassword(cred.getPassword()));
 		
-		if(checkCred.getHashedPass().equalsIgnoreCase("")) {
+		if(user.getCredentials().getHashedPass().equalsIgnoreCase("")) {
 			throw new HttpException(400); // bad request
 		}
-		System.out.println(cred.getHashedPass());
-		System.out.println(checkCred.getHashedPass());
 		
-		if(cred.getHashedPass().equals(checkCred.getHashedPass())) {
-			return true;
+		if(cred.getHashedPass().equals(user.getCredentials().getHashedPass())) {
+			return user;
 		}else {
 			throw new HttpException(400);
 		}
