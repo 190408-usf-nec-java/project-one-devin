@@ -19,9 +19,9 @@ public class LoginService {
 	 */
 	public User login(Credentials cred) throws HttpException{
 		
-		/*char[] pwd = "hamsterparty".toCharArray();
-		Credentials testCred = new Credentials("MontyPython", pwd, passwordUtil.hashPassword(pwd));
-		User user = new User(testCred, "Monty", "Python", "monty@python.com", "1");
+		/*char[] pwd = "iamtheadminbro".toCharArray();
+		Credentials testCred = new Credentials("DevinStuart", pwd, passwordUtil.hashPassword(pwd));
+		User user = new User(testCred, "Devin", "Stuart", "devin.stuart740@gmail.com", "1", 0);
 		try {
 			userDao.addUser(user);
 		}catch (SQLException e) {
@@ -32,6 +32,7 @@ public class LoginService {
 		try {
 			user = userDao.getUser(cred.getUsername());
 		} catch (SQLException e) {
+			e.printStackTrace();
 			throw new HttpException(500);
 		}
 		cred.setHashedPass(passwordUtil.hashPassword(cred.getPassword()));
@@ -39,8 +40,7 @@ public class LoginService {
 		if(user.getCredentials().getHashedPass().equalsIgnoreCase("")) {
 			throw new HttpException(400); // bad request
 		}
-		
-		if(cred.getHashedPass().equals(user.getCredentials().getHashedPass())) {
+		if(cred.getHashedPass().contentEquals(user.getCredentials().getHashedPass())) {
 			return user;
 		}else {
 			throw new HttpException(400);

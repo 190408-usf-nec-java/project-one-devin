@@ -1,26 +1,46 @@
 package com.revature.beans;
 
-import java.time.LocalTime;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+
+@JsonIgnoreProperties(value = {"author", "resolver"})
 
 public class Expense {
 	
 	private int expenseID;
 	private double amount;
-	private LocalTime submittedAt;
-	private LocalTime resolvedAt;
+	private String submittedAt;
+	private String resolvedAt;
 	private String desciption;
 	private String receipt;
+	
 	private User author;
+	private String authorName;
+	private int authorId; // specifically used for jackson
 	private User resolver;
+	private String resolverName;
 	private String status;
 	private String type;
 	
 	
+	public int getAuthorId() {
+		return authorId;
+	}
+	public void setAuthorId(int authorId) {
+		this.authorId = authorId;
+	}
 	public int getExpenseID() {
 		return expenseID;
 	}
-
-
+	
+	public String getResolverName() {
+		return resolverName;
+	}
+	
+	public String getAuthorName() {
+		return authorName;
+	}
+	
 	public void setExpenseID(int expenseID) {
 		this.expenseID = expenseID;
 	}
@@ -36,23 +56,23 @@ public class Expense {
 	}
 
 
-	public LocalTime getSubmittedAt() {
+	public String getSubmittedAt() {
 		return submittedAt;
 	}
 
 
-	public void setSubmittedAt(LocalTime submittedAt) {
+	public void setSubmittedAt(String submittedAt) {
 		this.submittedAt = submittedAt;
 	}
 
 
-	public LocalTime getResolvedAt() {
+	public String getResolvedAt() {
 		return resolvedAt;
 	}
 
 
-	public void setResolvedAt(LocalTime resolvedAt) {
-		this.resolvedAt = resolvedAt;
+	public void setResolvedAt(String timestamp) {
+		this.resolvedAt = timestamp;
 	}
 
 
@@ -83,6 +103,7 @@ public class Expense {
 
 	public void setAuthor(User author) {
 		this.author = author;
+		this.authorName = author.getFirstname().concat(author.getLastname());
 	}
 
 
@@ -93,6 +114,9 @@ public class Expense {
 
 	public void setResolver(User resolver) {
 		this.resolver = resolver;
+		System.out.println(resolver);
+		System.out.println(resolver.getFirstname() + resolver.getLastname());
+		this.resolverName = resolver.getFirstname() + resolver.getLastname();
 	}
 
 
@@ -115,6 +139,14 @@ public class Expense {
 		this.type = type;
 	}
 
+	
+	@Override
+	public String toString() {
+		return "Expense [expenseID=" + expenseID + ", amount=" + amount + ", submittedAt=" + submittedAt
+				+ ", resolvedAt=" + resolvedAt + ", desciption=" + desciption + ", receipt=" + receipt + ", author="
+				+ author + ", authorName=" + authorName + ", resolver=" + resolver + ", resolverName=" + resolverName
+				+ ", status=" + status + ", type=" + type + "]";
+	}
 
 	@Override
 	public int hashCode() {
@@ -124,17 +156,18 @@ public class Expense {
 		temp = Double.doubleToLongBits(amount);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + ((author == null) ? 0 : author.hashCode());
+		result = prime * result + ((authorName == null) ? 0 : authorName.hashCode());
 		result = prime * result + ((desciption == null) ? 0 : desciption.hashCode());
 		result = prime * result + expenseID;
 		result = prime * result + ((receipt == null) ? 0 : receipt.hashCode());
 		result = prime * result + ((resolvedAt == null) ? 0 : resolvedAt.hashCode());
 		result = prime * result + ((resolver == null) ? 0 : resolver.hashCode());
+		result = prime * result + ((resolverName == null) ? 0 : resolverName.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
 		result = prime * result + ((submittedAt == null) ? 0 : submittedAt.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
-
 
 	@Override
 	public boolean equals(Object obj) {
@@ -151,6 +184,11 @@ public class Expense {
 			if (other.author != null)
 				return false;
 		} else if (!author.equals(other.author))
+			return false;
+		if (authorName == null) {
+			if (other.authorName != null)
+				return false;
+		} else if (!authorName.equals(other.authorName))
 			return false;
 		if (desciption == null) {
 			if (other.desciption != null)
@@ -174,6 +212,11 @@ public class Expense {
 				return false;
 		} else if (!resolver.equals(other.resolver))
 			return false;
+		if (resolverName == null) {
+			if (other.resolverName != null)
+				return false;
+		} else if (!resolverName.equals(other.resolverName))
+			return false;
 		if (status == null) {
 			if (other.status != null)
 				return false;
@@ -192,17 +235,8 @@ public class Expense {
 		return true;
 	}
 
-
-	@Override
-	public String toString() {
-		return "Expense [expenseID=" + expenseID + ", amount=" + amount + ", submittedAt=" + submittedAt
-				+ ", resolvedAt=" + resolvedAt + ", desciption=" + desciption + ", receipt=" + receipt + ", author="
-				+ author + ", resolver=" + resolver + ", status=" + status + ", type=" + type + "]";
-	}
-
-
-	public Expense(int expenseID, double amount, LocalTime submittedAt, LocalTime resolvedAt, String desciption,
-			String receipt, User author, User resolver, String status, String type) {
+	public Expense(int expenseID, double amount, String submittedAt, String resolvedAt, String desciption,
+			String receipt, User author, User resolver, String status, String type, int authorId) {
 		super();
 		this.expenseID = expenseID;
 		this.amount = amount;
@@ -214,6 +248,9 @@ public class Expense {
 		this.resolver = resolver;
 		this.status = status;
 		this.type = type;
+		this.authorId = authorId;
+		this.authorName = author.getFirstname().concat(author.getLastname());
+		this.resolverName = resolver.getFirstname().concat(resolver.getLastname());
 	}
 
 

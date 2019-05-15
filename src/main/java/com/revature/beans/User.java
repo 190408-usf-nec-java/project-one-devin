@@ -1,18 +1,23 @@
 package com.revature.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(value = {"credentials"})
 public class User {
-	private Credentials credentials;
+	private Credentials credentials = new Credentials();
 	private String firstname;
 	private String lastname;
 	private String email;
 	private String role;
+	private int id;
 	
 	public User() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public User(Credentials credentials, String firstname, String lastname, String email, String role) {
+	public User(Credentials credentials, String firstname, String lastname, String email, String role, int id) {
 		super();
+		this.id = id;
 		this.credentials = credentials;
 		this.firstname = firstname;
 		this.lastname = lastname;
@@ -65,6 +70,12 @@ public class User {
 		} else if (!role.equals(other.role))
 			return false;
 		return true;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 	public Credentials getCredentials() {
 		return credentials;

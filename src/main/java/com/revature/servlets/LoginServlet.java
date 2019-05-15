@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.catalina.servlets.DefaultServlet;
 
@@ -28,14 +29,15 @@ public class LoginServlet extends DefaultServlet{
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		response.addHeader("Access-Control-Allow-Headers", "content-type");
 		response.addHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+		response.addHeader("Access-Control-Allow-Credentials", "true");
+		response.addHeader("content-type", "application/json");
 		super.service(request, response);
 	}
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-		resp.getWriter().write("Yo yoy yo");
+		// do nothing
 	}
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException{
-		System.out.println("We did it");
 		ObjectMapper om = new ObjectMapper();
 		Credentials cred = om.readValue(req.getInputStream(), Credentials.class);
 		User user = null;
@@ -43,17 +45,15 @@ public class LoginServlet extends DefaultServlet{
 			user = this.loginService.login(cred);
 		} catch (HttpException e) {
 			resp.setStatus(e.getErrorCode());
+			e.printStackTrace();
+			System.out.println("here");
 			return;
 		}
-		Cookie ussrCookie = new Cookie("username", cred.getUsername());
-		Cookie roleCookie = new Cookie("role", user.getRole());
-		resp.addCookie(ussrCookie);
-		resp.addCookie(roleCookie);
 		om.writeValue(resp.getOutputStream(), user);
-		
 		
 		//HttpSession session = req.getSession();
 		
-		//session.setAttribute("id", id);	
+		//session.setAttribute("username", cred.getUsername());
+		//session.setAttribute("role", user.getRole());
 	}
 }
